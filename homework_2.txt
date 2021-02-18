@@ -24,6 +24,24 @@ $ open homework_2.txt
 $ git remote add origin https://github.com/mckeegank/getgitty.git
 #I did this after clicking around on my GitHub to make that repository...
 #Could I have done that from the command line? I guess that's related to the question above
-#Checking if it worked
+#Checking if it worked... it did!
 $ git remote -v
-#And now adding it
+
+#And now adding it... and it breaks
+#Tried git status, all looks good
+#Did a git add for both documents (this one and assignment 1), then git commit
+#git status and git log look good
+#But when I try git origin push master this is what I see:
+# ! [rejected]        master -> master (non-fast-forward)
+#error: failed to push some refs to 'https://github.com/mckeegank/getgitty.git'
+#hint: Updates were rejected because the tip of your current branch is behind
+#hint: its remote counterpart. Integrate the remote changes (e.g.
+#hint: 'git pull ...') before pushing again.
+#hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+#This doesn't make sense to me, and when I try to pull there is nothing to pull yet (obviously)
+#I tried all our git branch and git checkout master tricks to make sure I was in the right branch
+#But hey, the internet is a wonderful thing. This might be dangerous, but it worked:
+$ git push -f origin master
+#As I understand it, -f forced it up there?
+#Since I've been adding all this now, I might have a conflict but hey we know how to resolve!
