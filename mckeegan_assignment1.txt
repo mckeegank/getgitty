@@ -1,5 +1,6 @@
 Kelli McKeegan
 Assignment 1: Linux/Unix refresh
+#adding this to figure out something with GitHub, disregard
 
 Part I: Questions
 1. The graphical user interface is one way humans interact with computers - it includes the pull-down menus and "clicking" that most computer-users are familiar with.
