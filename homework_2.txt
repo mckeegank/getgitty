@@ -1,0 +1,29 @@
+Kelli McKeegan
+Assignment 2 
+Code used to add & commit mckeegan_assignment1 to GitHub
+
+#First I made a new directory because this is going to be my repository
+#It's called getgitty
+$ mkdir getgitty
+$ cd getgitty
+#Then I initialized an empty repository in the getgitty directory
+$ git init
+###QUESTION: is there a way to make the directory and name the repo in one command?
+#Like for instance, would typing git init getgitty just go ahead and make that?
+#Anyway these were after thoughts...
+
+#Then I moved my assignment from the directory it was in to where I was working
+#I realize I could've done this before init
+$ mv ../mckeegan_assignment1.txt .
+#And finally made .txt file for this documentation
+$ touch homework_2.txt
+$ open homework_2.txt
+
+#Anywhooo sorry now for the good stuff!
+#Linking directory to GitHub
+$ git remote add origin https://github.com/mckeegank/getgitty.git
+#I did this after clicking around on my GitHub to make that repository...
+#Could I have done that from the command line? I guess that's related to the question above
+#Checking if it worked
+$ git remote -v
+#And now adding it
