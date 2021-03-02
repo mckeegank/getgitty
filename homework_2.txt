@@ -12,6 +12,9 @@ $ git init
 #Like for instance, would typing git init getgitty just go ahead and make that?
 #Anyway these were after thoughts...
 
+####### not that I am aware of but worth a google?
+
+
 #Then I moved my assignment from the directory it was in to where I was working
 #I realize I could've done this before init
 $ mv ../mckeegan_assignment1.txt .
@@ -20,6 +23,7 @@ $ touch homework_2.txt
 $ open homework_2.txt
 
 #Anywhooo sorry now for the good stuff!
+#### cant wait!
 #Linking directory to GitHub
 $ git remote add origin https://github.com/mckeegank/getgitty.git
 #I did this after clicking around on my GitHub to make that repository...
@@ -45,3 +49,5 @@ $ git remote -v
 $ git push -f origin master
 #As I understand it, -f forced it up there?
 #Since I've been adding all this now, I might have a conflict but hey we know how to resolve!
+
+## nice job. the branch issue is annoying. well done figuring out a solve here. 
