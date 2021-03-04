@@ -1,0 +1,109 @@
+Kelli McKeegan
+Assignment 1: Linux/Unix refresh
+
+Part I: Questions
+1. The graphical user interface is one way humans interact with computers - it includes the pull-down menus and "clicking" that most computer-users are familiar with.
+With the command line interface, a shell reads a command and evaluates or executes it, then prints the output and waits for the next command. CLI doesn't require a mouse/trackpad, and tasks are much more efficient.
+2. The shell is the program with the prompt to which commands are given and where other programs are run through. A common shell is "BASH," and sometimes it is referred to as the terminal.
+3. ls
+4. cd
+5. pwd
+6. man CommandName (example: $ man cd)
+7. $
+8. You would use the option -t with ls (example: $ ls -t)
+9. Type cd space then enter, $ cd / or $ cd ~
+10. Absolute paths include the whole path by name and start with a leading slash (example: cd /Users/kelli/BIOL792/intropython).
+Relative paths use generic notation to move amongst directories relative to the ones behind.
+### relative paths are relative to where you are
+
+
+11. Single period (.), which is current directory, or double period (..) to move back in directory hierarchy.
+12. Spaces in file names will cause each word to be viewed as a separate argument and break the code.
+13. The use of underscores, dashes, periods, or CamelCase
+14. Nano is a text-editing software by GNU. Text and code editors have certain functionalities that make writing text for code easier.
+I do not use Nano; I use BBEdit for Mac (used to be TextWrangler).
+15. Wildcards are exactly what their name implies: * represents any character or string of characters before.
+16. Any file that ends in the .txt extension
+17. Moving a file with mv will overwrite any file with the same name.
+18. Unless precautionary prompts are set up, it will delete something permanently (without moving to "trash" or anything).
+19. > redirects to a file, but will overwrite each time if used in a loop or repeatedly, while >> will append the output to the existing file each time.
+20. Prints the first 10 lines of a file (by default - can change # of lines with -n or bytes with -c)
+21. Run multiple commands in a single line of code by sending the standard output to the next command in the string
+22. This command first concatenates and prints contents of the file, then finds all the unique lines by filtering out matches, then finally writes the first 5 lines of that output to the file proteins.fasta.
+23. A loop is a program strategy that tells the shell to perform the same task(s) on multiple objects in a list. 
+Loops can be used to efficiently, accurately process multiple files or lines with one command.
+24. Concatenate and append the contents of only the files that end in .txt to the file fruits.txt
+25. Lines of code (of any length!) saved as a .sh file that can then be read in as a program from a single command in the terminal.
+26. Making a script/program saves time and potential for error, compared to having to type out frequently-used commands each time.
+27. # makes the shell or program "blind" to text after it in that line, so comments or annotation can be made to document/explain the code without breaking it
+28. Global Regular Expression Print - it searches for patterns of strings or characters in a file and prints the matches
+29. Searches for files or directories
+
+Part II: Writing Code
+1. ### change directory to Desktop then list contents
+$ cd Desktop/ 
+$ ls
+
+2. ### see photo attached
+$ cd ~/Desktop/COMPS/ #change directory to COMPS folder on Desktop
+$ cd ../PhilSci/ #relative - back out one directory to Desktop, then go into PhilSci
+$ cd /Users/kelli/Desktop/2020_Y3 #absolute path - to 2020_Y3 directory
+
+3. ### make new directory named Refresher on Desktop, change to this directory
+$ mkdir Refresher
+$ cd Refresher/
+### make 2 files ending in .txt, then use wildcard to list these
+$ touch meow.txt woof.txt
+$ ls *.txt
+
+4. ### just going to move the file into the Refresher directory I made previously, then list contents
+$ mv Downloads/Hutia_DNA.fasta Desktop/Refresher/
+$ ls Desktop/Refresher/
+$ cd Desktop/Refresher/ #changing directory
+#note: I usually go into the directory I want to work in FIRST before moving & listing stuff
+### count # of lines in file
+$ wc -l Hutia_DNA.fasta  #2382004 lines  
+### since 2 lines per individual = half this for # of sequences
+### could also use grep, then pipe to count # of lines starting with > 
+$ grep "^>" Hutia_DNA.fasta | wc -l #that works and checks out! 1191002 sequences total
+
+5. ### not the neatest... but grabbed the first 100 lines that DON'T start with > and made into new file
+$ grep "^[^>]" Hutia_DNA.fasta | head -n 100 > MyOutputFile.fasta
+### using sort and uniq to find # of unique sequences
+$ sort MyOutputFile.fasta | uniq | wc -l  #gives us 99... IS THIS RIGHT?!
+
+### nice!
+
+6. ### first I used mkdir to make "NewDir" - couldn't figure out if I could do that in the loop
+### this will take all files ending in .txt and make copies into the new directory
+$ for file in *.txt; do cp $file NewDir/$file; done
+### nice!
+
+7. ### Left all this in here if you want a laugh! 
+### to run that made-up program on files that end in .fasta from the command line, I would type:
+$ python find_taxa.py *.fasta
+
+# to run a python program on a list of files need the loop
+	for file in *.fasta
+	do
+	python python_program.py $file
+	done
+
+
+# shell script to run a program that would run this?
+### name of script: RunPro.sh
+#!/usr/bin/bash
+### this script will run a python program on all files ending in .fasta - I think...
+###########################
+# annotations above code
+# usage: bash RunPro.sh
+###
+for file in *.fasta  ### for each file that ends in .fasta
+# loop through and run this python program
+	do python find_taxa.py
+# always remember to end the loop
+done
+## almost there! See loop example above
+
+8. ### code to find # of lines with GAGA in file
+$ grep -c GAGA Hutia_DNA.fasta #answer: 304806
