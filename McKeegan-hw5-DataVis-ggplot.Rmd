@@ -1,0 +1,237 @@
+---
+title: "McKeegan-hw5-DataVis-ggplot"
+author: "Kelli McKeegan"
+date: 'DUE: Thursday, March 25'
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<br/>
+
+#### Necessary items:
+- **libraries:** tidyverse, ggsci, ggforce, patchwork, Hmisc
+- **files:** bloom_df.csv, hw_task2_blank.png
+
+Within RStudio you can directly edit these blocks of code and turn in your homework that way with your code and figures printed.   
+I **HIGHLY** recommend getting your code to work in a normal R script then just copy and pasting the final code over to this document
+
+**First: import libraries, set your working directory, and read in bloom_df**  
+```{r init, message=FALSE, warning=FALSE}
+library(tidyverse) 
+library(ggforce) 
+library(ggsci)
+library(patchwork)
+library(Hmisc)
+
+setwd('/Users/kelli/BIOL792/part2_sp21/Data_Science_For_Biology_II/Part.3_DataVisualization/1-ggplot') 
+
+bloom_df <- read.csv('bloom_df.csv')
+```
+
+### bloom_df contents
+- **taxa:** genus_species
+- **genus** 
+- **species** 
+- **logbodysize** 
+- **trophic_position**
+- **reg:** diadromous or non-diadromous
+
+Let's take a peak and look at the structure
+```{r bloom_df}
+bloom_df[1:5,]
+str(bloom_df)
+```
+
+### Graphical tasks
+
+This next tasks are going to ask you to make a series of figures. For each one, I would like you to make all of them *look good*. Change the theme around, change the axis labels, etc. Additionally, each of these will use the **reg** column which has 2 factors. Change the color and/or shape of them both. 
+
+### Task 1: Continuous vs. continuous plot
+
+Create two scatterplots of logbodysize vs. trophic_position grouped by reg
+
+##### First plot: 
+- a 2 trend lines (method = 'lm'), one for each reg variable
+
+```{r 1.1}
+#plot 1.1
+ggplot(data=bloom_df,aes(x=logbodysize,y=trophic_position,colour=reg)) + 
+  #starting simple I guess because I'm scared
+  geom_point(aes(fill=reg),size=3,pch=21,colour='black') + 
+  stat_smooth(method='lm') 
+```
+
+##### Second plot 
+- a single trend line for the whole model
+
+```{r 1.2}
+#plot 1.2
+ggplot(data=bloom_df,aes(x=logbodysize,y=trophic_position,colour=reg)) + 
+  geom_point(aes(fill=reg),size=3,pch=21,colour='black') + 
+  #simple again, point size 3 and the black outlines because I think they look clearer
+  #somehow these other instructions or something else made it just one trendline?
+  stat_smooth(method='lm',linetype='dashed',colour='black') +
+  #let's do some fun colours
+  scale_fill_manual(name='Reg:',values=c('blue','magenta')) +
+  #and practice doing labels & a title
+  xlab('size') + ylab('position') + 
+  ggtitle('Log Body Size vs. Trophic Position by Migration Status')
+```
+
+### Task 2: Continuous vs. categorical
+
+##### The layout will be: 
+- 2 panels: trophic_position and logbodysize  
+- x axis: reg  
+- y axis: value of trophic_position and logbodysize  
+
+##### Create 4 plots:  
+- bar and error bars (mean and 95% conf. int.)  
+- point and error bars (mean and 95% conf. int.)  
+- box plots  
+- raw data + point and error bars (mean and 95% conf. int.)  
+
+All these plots should have the same general layout but change the type of plot to visualize the data. 
+
+**HINT:** logbodysize and trophic_position need to be turned into long format  
+
+##### Example layout:   
+![sample layout for task2](hw_task2_blank.png){width=50%}
+```{r}
+#making longbodysize & trophic_position into long format
+#using gather - built-in ggplot function, quicker than rbind?
+bloom_long_df <- bloom_df %>% 
+  gather(key=characters,value=mean,c(logbodysize,trophic_position))
+```
+
+```{r 2.1}
+#plot 2.1
+#bar and error bars (mean and 95% conf. int.)
+#using the code from the "very bad plot" but hopefully it won't be super bad?
+ggplot(data=bloom_long_df,aes(x=reg,y=mean,fill=reg)) +
+  #scaling is unique to data; bar graph using built-in stats
+  facet_wrap(~characters,nrow=1,scales = 'free') +
+  stat_summary(fun = mean, geom = "bar", width = 0.5) +
+  #adding error bars... not sure wht all the fun is and the mean_cl_boot?
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",color='black', width =0.5) + 
+  #just going to do gray for this one
+  scale_fill_manual(name='Characters:',values=c('gray65','gray33')) +
+  ggtitle('Mean Size & Trophic Position by Migration Status') + 
+  #no yucky gray background
+  theme_classic()
+```
+
+```{r 2.2}
+#plot 2.2
+#point and error bars (mean and 95% conf. int.)
+gb1 = wes_palettes$GrandBudapest1
+ggplot(data=bloom_long_df, aes(x=reg,y=mean,fill=reg)) +
+  facet_wrap(~characters,nrow=1,scales = 'free') +
+  geom_sina(size=3,pch=21) +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",color='black',width = 0.3,size=0.5) + 
+  stat_summary(fun = mean, geom = "point",size=3,colour='black',fill='white') +
+  scale_fill_manual(values = gb1[2:3]) + 
+  ggtitle('Mean Size & Trophic Position by Migration Status') + 
+  #no yucky gray background
+  #I kind of like the grids for this since the points are staggered
+  theme_bw() +
+  theme(#title in center
+        plot.title = element_text(size = 15, colour="black",face = "bold",hjust=0.5),
+        axis.text = element_text(size=9),
+        axis.title = element_text(size = 12, colour="black",face = "bold"),
+        #idk I'm just Wes Anderson-ing out now
+        panel.border = element_rect(size = 1.5, colour = gb1[4]),
+        legend.title = element_text(size = 12, colour="black",face = "bold",vjust = 1),
+        legend.text = element_text(size=12),
+        strip.text.x = element_text(size=12, face="bold"),
+        strip.background = element_rect(size=1.5,colour=gb1[4],fill=gb1[1]))
+```
+
+```{r 2.3}
+#plot 2.3
+#box plots - again, using the code for "eh, bad" so hopefully this comes out alright
+ggplot(data=bloom_long_df, aes(x=reg,y=mean,fill=reg)) +
+  facet_wrap(~characters,nrow=1,scales = 'free') +
+  geom_boxplot(color="white") + 
+  #want to put a title on the legend, and playing with hexadecimal colors now
+  scale_fill_manual(name='Migratory Status',values=c('#00CC66','#FF9933')) +
+  ggtitle('Mean Size & Trophic Position by Migration Status') + 
+  #playing with different themes - this one is kinda wild
+  theme_dark() + 
+  theme(plot.title = element_text(size = 12, colour="black",face = "bold"),
+        axis.title = element_text(size = 12, colour="black",face = "bold"))
+  #SOOO not friendly to the eyes but I'm having fun
+  #gearing up for the bad-figure olympics
+
+```
+
+```{r 2.4}
+#plot 2.4
+#raw data + point and error bars (mean and 95% conf. int.)  
+#for my next trick, I'll use code from the "okay" plot and try to make it okay-er
+ggplot(data=bloom_long_df,aes(x=reg,y=mean,fill=reg)) +
+  facet_wrap(~characters,nrow=1,scales = 'free') +
+  geom_sina(size=3,pch=24) +
+  scale_fill_tron() +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",color='black',width = 0.3) + 
+  stat_summary(fun = mean, geom = "point",size=5,colour='black') +
+  ggtitle('Mean Body Size & Trophic Position \n by Migration Status') + 
+  #still not really sure what diadromy is so sorry if it's not migration status?
+  xlab("Migration Status") + ylab("Log Body Size") +
+  theme_bw() +
+  theme(legend.position='none',
+        plot.title = element_text(size = 20, colour="black",face = "bold"))
+#these are alright... but I'll tweak a little for my better figure below
+```
+
+### Task 3: layering your plots
+
+Make any two figures with the bloom_df! Can be something we've done or something completely different. Make one TERRIBLE figure and one GREAT figure.
+
+Put them together using *patchwork* or *ggarrange* 
+
+
+```{r 3}
+#plot 3 - terrible
+terrible <- ggplot(data=bloom_long_df,aes(x=reg,y=mean,fill=reg)) +
+  #no scales=free for some extra wacky
+  facet_wrap(~characters,nrow=1) +
+  stat_summary(fun = mean, geom = "bar") +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",color='black') + 
+  #looked up colors that people with color blindess might not distinguish between
+  scale_fill_manual(values=c('#339999','#9966CC')) + 
+  ggtitle('Terrible Plot Showing logbodysize and trophicposition based on diatromous vs. non-diatromous') + 
+  theme_dark()
+  theme(legend.position='none',
+        plot.title = element_text(size = 20, colour="black",face = "bold"))
+terrible
+
+#making a color-blindness-friendly palette 
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+#plot 3 - better plot
+#again not sure my eye is trained enough to know what is GREAT
+iwouldntsayitsgreat <- ggplot(data=bloom_long_df,aes(x=reg,y=mean,fill=reg)) +
+  facet_wrap(~characters,nrow=1,scales = 'free') +
+  geom_sina(size=3,pch=23) +
+  scale_fill_manual(values=cbbPalette[c(6,2)]) +
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar",color='black',face="bold", width = 0.3) + 
+  stat_summary(fun = mean, geom = "point",size=3,colour='black') +
+  ggtitle('Mean Body Size & Trophic Position \n by Migration Status') + 
+  #still not really sure what diadromy is so sorry if it's not migration status?
+  xlab("Migration Status") + ylab("Mean") +
+  theme_bw() +
+  theme(legend.position='none',
+        plot.title = element_text(size = 12, colour="black",face = "bold", hjust=0.5),
+        axis.title = element_text(size = 12, colour="black",face = "bold"),
+        strip.text.x = element_text(size=10, face="bold"),
+        strip.background = element_rect(colour="#333333",fill="#CCCCCC"))
+iwouldntsayitsgreat
+
+#putting them together, I want one on top of the other
+terrible + iwouldntsayitsgreat + plot_layout(ncol=1)
+#might need a little help on layout since they're squished?
+```
