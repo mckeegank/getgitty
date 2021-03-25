@@ -25,6 +25,7 @@ library(ggforce)
 library(ggsci)
 library(patchwork)
 library(Hmisc)
+library(wesanderson)
 
 setwd('/Users/kelli/BIOL792/part2_sp21/Data_Science_For_Biology_II/Part.3_DataVisualization/1-ggplot') 
 
